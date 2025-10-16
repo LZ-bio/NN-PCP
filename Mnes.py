@@ -229,7 +229,7 @@ def permutation_nes(i, cla, y, mmnes):
 
 def cal_mgsea(response,cancer,dataname,chosedPathways):
     permutation = 1000
-    file = "/home/zhouli/PhD/Mut_PR/data/result2/" + cancer + '_' + dataname + '_mmnes.csv'
+    file = "/home/qmliu/zhouli/Mut_PR_1/data/result2/" + cancer + '_' + dataname + '_mmnes.csv'
     mmnes = pd.read_csv(file,index_col = 0)
     cancer_barcode = list(response.index)
 
