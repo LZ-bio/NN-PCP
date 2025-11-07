@@ -53,7 +53,7 @@ def parse_args():
         "--beta_1", type=int, default = 1, help="The weight of loss function(class2)"
     )
     parser.add_argument(
-        "--beta_2", type=int, default = 4, help="The weight of loss function(class3)"
+        "--beta_2", type=int, default = 1, help="The weight of loss function(class3)"
     )
     args = parser.parse_args()
     return args
@@ -281,7 +281,7 @@ class Nets(Layer):
             'bias_regularizer': regularizers.serialize(self.bias_regularizer),
 
             'kernel_initializer': initializers.serialize(self.kernel_initializer),
-            'W_regularizer': regularizers.serialize(self.kernel_regularizer),
+            #'W_regularizer': regularizers.serialize(self.kernel_regularizer),
 
         }
         base_config = super(Nets, self).get_config()
@@ -297,18 +297,18 @@ def create_models_pheno11(Omics_data):
     #SNV
     M_inputs = Input(shape=(Omics_data.shape[1],), dtype='float32',name= 'inputs_m')
 
-    m0 = Nets(Get_Node_relation_snv[0].shape[1],mapp =Get_Node_relation_snv[0].values, name = 'm0')(M_inputs)
+    m0 = Nets(Get_Node_relation_snv[0].shape[1],mapp =Get_Node_relation_snv[0].values, name = 'm00')(M_inputs)
     #m0 = keras.layers.Dense(Get_Node_relation_snv[0].shape[1],activation='elu',kernel_regularizer=regularizers.l2(0.001),use_bias=True,bias_regularizer=regularizers.l2(0.001))(M_inputs)
     drop0 = keras.layers.Dropout(dr)(m0)
     drop0 = BatchNormalization()(drop0)
     
     #m1 = keras.layers.Dense(Get_Node_relation_snv[1].shape[1],activation='elu',kernel_regularizer=regularizers.l2(0.001),use_bias=True,bias_regularizer=regularizers.l2(0.001))(drop0)
-    m1 = Nets(Get_Node_relation_snv[1].shape[1],mapp =Get_Node_relation_snv[1].values, name = 'm1')(drop0)
+    m1 = Nets(Get_Node_relation_snv[1].shape[1],mapp =Get_Node_relation_snv[1].values, name = 'm10')(drop0)
     drop_m1 = keras.layers.Dropout(0.5)(m1)
     drop_m1 = BatchNormalization()(drop_m1)
 
     #m2 = keras.layers.Dense(Get_Node_relation_snv[2].shape[1],activation='elu',kernel_regularizer=regularizers.l2(0.001),use_bias=True,bias_regularizer=regularizers.l2(0.001))(drop_m1)
-    m2 = Nets(Get_Node_relation_snv[2].shape[1],mapp =Get_Node_relation_snv[2].values,name = 'm2')(drop_m1)
+    m2 = Nets(Get_Node_relation_snv[2].shape[1],mapp =Get_Node_relation_snv[2].values,name = 'm20')(drop_m1)
     drop_m21 = keras.layers.Dropout(0.5)(m2)
     drop_m21 = BatchNormalization()(drop_m21)
     
@@ -326,17 +326,17 @@ def create_models_pheno11(Omics_data):
     h_inputs = Input(shape=(Omics_data.shape[1],), dtype='float32',name= 'inputs_h')
 
     #h0 = keras.layers.Dense(Get_Node_relation_amp[0].shape[1],activation='elu',kernel_regularizer=regularizers.l2(0.001),use_bias=True,bias_regularizer=regularizers.l2(0.001))(h_inputs)
-    h0 = Nets(Get_Node_relation_amp[0].shape[1],mapp =Get_Node_relation_amp[0].values, name = 'h0')(h_inputs)
+    h0 = Nets(Get_Node_relation_amp[0].shape[1],mapp =Get_Node_relation_amp[0].values, name = 'm01')(h_inputs)
     drop_h0 = keras.layers.Dropout(dr)(h0)
     drop_h0 = BatchNormalization()(drop_h0)
 
     #h1 = keras.layers.Dense(Get_Node_relation_amp[1].shape[1],activation='elu',kernel_regularizer=regularizers.l2(0.001),use_bias=True,bias_regularizer=regularizers.l2(0.001))(drop_h0)
-    h1 = Nets(Get_Node_relation_amp[1].shape[1],mapp =Get_Node_relation_amp[1].values, name = 'h1')(drop_h0)
+    h1 = Nets(Get_Node_relation_amp[1].shape[1],mapp =Get_Node_relation_amp[1].values, name = 'm11')(drop_h0)
     drop_h1 = keras.layers.Dropout(0.5)(h1)
     drop_h1 = BatchNormalization()(drop_h1)
 
     #h2 = keras.layers.Dense(Get_Node_relation_amp[1].shape[1],activation='elu',kernel_regularizer=regularizers.l2(0.001),use_bias=True,bias_regularizer=regularizers.l2(0.001))(drop_h1)
-    h2 = Nets(Get_Node_relation_amp[2].shape[1],mapp =Get_Node_relation_amp[2].values,name = 'h2')(drop_h1)
+    h2 = Nets(Get_Node_relation_amp[2].shape[1],mapp =Get_Node_relation_amp[2].values,name = 'm21')(drop_h1)
     drop_h21 = keras.layers.Dropout(0.5)(h2)
     drop_h21 = BatchNormalization()(drop_h21)
 
@@ -354,17 +354,17 @@ def create_models_pheno11(Omics_data):
     s_inputs = Input(shape=(Omics_data.shape[1],), dtype='float32',name= 'inputs_s')
 
     #s0 = keras.layers.Dense(Get_Node_relation_del[0].shape[1],activation='elu',kernel_regularizer=regularizers.l2(0.001),use_bias=True,bias_regularizer=regularizers.l2(0.001), name = 's0')(s_inputs)
-    s0 = Nets(Get_Node_relation_del[0].shape[1],mapp =Get_Node_relation_del[0].values, name = 's0')(s_inputs)
+    s0 = Nets(Get_Node_relation_del[0].shape[1],mapp =Get_Node_relation_del[0].values, name = 'm02')(s_inputs)
     drop_s0 = keras.layers.Dropout(dr)(s0)
     drop_s0 = BatchNormalization()(drop_s0)
 
     #s1 = keras.layers.Dense(Get_Node_relation_del[1].shape[1],activation='elu',kernel_regularizer=regularizers.l2(0.001),use_bias=True,bias_regularizer=regularizers.l2(0.001))(drop_s0)
-    s1 = Nets(Get_Node_relation_del[1].shape[1],mapp =Get_Node_relation_del[1].values, name = 's1')(drop_s0)
+    s1 = Nets(Get_Node_relation_del[1].shape[1],mapp =Get_Node_relation_del[1].values, name = 'm12')(drop_s0)
     drop_s1 = keras.layers.Dropout(0.5)(s1)
     drop_s1 = BatchNormalization()(drop_s1)
 
     #s2 = keras.layers.Dense(Get_Node_relation_del[2].shape[1],activation='elu',kernel_regularizer=regularizers.l2(0.001),use_bias=True,bias_regularizer=regularizers.l2(0.001))(drop_s1)
-    s2 = Nets(Get_Node_relation_del[2].shape[1],mapp =Get_Node_relation_del[2].values,name = 's2')(drop_s1)
+    s2 = Nets(Get_Node_relation_del[2].shape[1],mapp =Get_Node_relation_del[2].values,name = 'm22')(drop_s1)
     drop_s21 = keras.layers.Dropout(0.5)(s2)
     drop_s21 = BatchNormalization()(drop_s21)
     
@@ -833,7 +833,7 @@ for rs in range(0,num_runs):
     kfscore = []
     kfscore1 = []
 
-    #p = 0
+    p = 0
     skf = StratifiedKFold(n_splits=5,shuffle=True,random_state=rs+1)
     #skf = RepeatedKFold(n_splits=5,n_repeats=2,shuffle=True,random_state=rs+1)
     for train_index, test_index in skf.split(x11, y1):
@@ -1039,7 +1039,7 @@ for rs in range(0,num_runs):
             net2.add_edges_from(edges)
             snv_pathways.append(root_node)
         #
-        mgsea_result_snv = cal_mgsea(response1,cancer,'mut',snv_pathways)
+        mgsea_result_snv = cal_mgsea(response1,cancer,'snv',snv_pathways)
         temp_result = mgsea_result_snv[mgsea_result_snv['nor_pvalue']<=threa1]
         snv_nor_pathways = list(temp_result.index)
         temp_result = mgsea_result_snv[mgsea_result_snv['tum_pvalue']<=threa1]
@@ -1124,7 +1124,7 @@ for rs in range(0,num_runs):
 
         model = create_models_pheno11(x1)
 
-        history = model.fit([X_train1,X_train2,X_train3],[y_train]*7,epochs=1,batch_size = 32,shuffle=True)
+        history = model.fit([X_train1,X_train2,X_train3],[y_train]*7,epochs=75,batch_size = 32,shuffle=True)
 
         y_pred = model.predict([X_test1,X_test2,X_test3])
         kfscore.append(evaluates(y_test, y_pred[-1]))
@@ -1165,15 +1165,15 @@ for rs in range(0,num_runs):
     kfscores = np.array(kfscore).sum(axis= 0)/5.0
     print("average value : pre = {}, acc = {},rec = {},f1 = {},auc = {},aupr = {},auprc = {}".format(round(kfscores[0],3),round(kfscores[1],3),round(kfscores[2],3),round(kfscores[3],3),round(kfscores[4],3),round(kfscores[5],3),round(results[6],3)))
     resu = pd.DataFrame(kfscore)
-    resu.to_csv('./data/result/{}/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}.csv'.format(cancer,chosefea,threa,threa1,dr,lr,sel,bel,n2,n3,n4,n5,n6,ba1,ba2,is_flag,0),index = False)
+    resu.to_csv('./data/result/{}/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}.csv'.format(cancer,chosefea,threa,threa1,dr,lr,sel,bel,n2,n3,n4,n5,n6,ba1,ba2,ba3,is_flag,0),index = False)
     resu = pd.DataFrame(kfscores)
-    resu.to_csv('./data/result/{}/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_avg.csv'.format(cancer,chosefea,threa,threa1,dr,lr,sel,bel,n2,n3,n4,n5,n6,ba1,ba2,is_flag,0),index = False)
+    resu.to_csv('./data/result/{}/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_avg.csv'.format(cancer,chosefea,threa,threa1,dr,lr,sel,bel,n2,n3,n4,n5,n6,ba1,ba2,ba3,is_flag,0),index = False)
     kfscores = np.array(kfscore1).sum(axis= 0)/5.0
     print("average value : pre = {}, acc = {},rec = {},f1 = {},auc = {},aupr = {},auprc = {}".format(round(kfscores[0],3),round(kfscores[1],3),round(kfscores[2],3),round(kfscores[3],3),round(kfscores[4],3),round(kfscores[5],3),round(results[6],3)))
     resu = pd.DataFrame(kfscore1)
-    resu.to_csv('./data/result/{}/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}.csv'.format(cancer,chosefea,threa,threa1,dr,lr,sel,bel,n2,n3,n4,n5,n6,ba1,ba2,is_flag,1),index = False)
+    resu.to_csv('./data/result/{}/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}.csv'.format(cancer,chosefea,threa,threa1,dr,lr,sel,bel,n2,n3,n4,n5,n6,ba1,ba2,ba3,is_flag,1),index = False)
     resu = pd.DataFrame(kfscores)
-    resu.to_csv('./data/result/{}/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_avg.csv'.format(cancer,chosefea,threa,threa1,dr,lr,sel,bel,n2,n3,n4,n5,n6,ba1,ba2,is_flag,1),index = False)
+    resu.to_csv('./data/result/{}/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_avg.csv'.format(cancer,chosefea,threa,threa1,dr,lr,sel,bel,n2,n3,n4,n5,n6,ba1,ba2,ba3,is_flag,1),index = False)
 
     '''
     #  average  five result
